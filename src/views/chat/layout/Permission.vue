@@ -58,8 +58,8 @@ onMounted(() => {
   if (params.token) {
     userStore.updateUserInfo({
       name: params.user_name as string,
-      avatar: params.avatar as string,
-      description: params.user_name_en as string,
+      // avatar: params.avatar as string,
+      // description: params.user_name_en as string,
     })
     authStore.setToken(params.token as string)
 
