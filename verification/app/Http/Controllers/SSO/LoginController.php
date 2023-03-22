@@ -71,6 +71,7 @@ class LoginController extends BaseController
 //            'user_id'   => $wxworkId,
             'user_name_en' => $username,
             'user_name' => $name,
+            'avatar' => $avatar,
         ]);
         return redirect(($backUrl ?: $this->config['web']) .'?' . $str);
     }
