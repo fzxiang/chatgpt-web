@@ -89,6 +89,38 @@ class LoginController extends BaseController
     }
 
     /**
+     * 验证token
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function check(Request $request)
+    {
+        $token = $request->get('token','');
+        if (!$token) {
+            return response()->json([
+                'status' => 'Fail',
+                'message' => 'token error' ,
+                'data' => [],
+            ]);
+        }
+
+        $tokenInfo = LoginService::getTokenFromCache($token);
+        if (empty($tokenInfo)) {
+            return response()->json([
+                'status' => 'Fail',
+                'message' => 'token error' ,
+                'data' => [],
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'token correct' ,
+            'data' => [],
+        ]);
+    }
+
+    /**
      * 生成token
      * @param $uid
      * @param $str

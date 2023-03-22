@@ -22,3 +22,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::any('/login', '\App\Http\Controllers\SSO\LoginController@login');
 Route::any('/ssoLogin', '\App\Http\Controllers\SSO\LoginController@ssoCallback');
 Route::post('/logout', '\App\Http\Controllers\SSO\LoginController@logout');
+Route::any('/check', '\App\Http\Controllers\SSO\LoginController@check');
