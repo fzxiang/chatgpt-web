@@ -33,3 +33,4 @@ coverage
 
 /verification/.env
 
+/docker-compose/docker-compose.yml
