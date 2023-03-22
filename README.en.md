@@ -196,14 +196,14 @@ http://localhost:3002/
 
 #### Docker Compose
 
-[Hub Address](https://hub.docker.com/repository/docker/chenzhaoyu94/chatgpt-web/general)
+[Hub Address](https://hub.docker.com/repository/docker/PaoYou94/chatgpt-web/general)
 
 ```yml
 version: '3'
 
 services:
   app:
-    image: chenzhaoyu94/chatgpt-web # always use latest, pull the tag image again when updating
+    image: PaoYou94/chatgpt-web # always use latest, pull the tag image again when updating
     ports:
       - 3002:3002
     environment:
@@ -330,4 +330,4 @@ If you find this project helpful and circumstances permit, you can give me a lit
 </div>
 
 ## License
-MIT © [ChenZhaoYu](./license)
+MIT © [PaoYou](./license)

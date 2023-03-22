@@ -46,3 +46,11 @@ export function fetchVerify<T>(token: string) {
     data: { token },
   })
 }
+
+export function fetchSSOLogin<T>() {
+  location.href = `${location.origin}/api/login?back_url=${location.origin}`
+  // return get<T>({
+  //   url: '/login',
+  // },
+  // )
+}
