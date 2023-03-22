@@ -31,6 +31,8 @@ services:
       SOCKS_PROXY_PORT:
       # HTTPS_PROXY 代理，可选
       HTTPS_PROXY:
+      # 单点登录代理
+      SSO_PROXY:
   #nginx:
   #  image: nginx:alpine
   #  ports:
