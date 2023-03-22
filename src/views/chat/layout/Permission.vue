@@ -1,8 +1,8 @@
 <script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue'
-import { NButton, NModal, useMessage } from 'naive-ui'
+import { onMounted } from 'vue'
+import { NButton, NModal } from 'naive-ui'
 import { useUrlSearchParams } from '@vueuse/core'
-import { fetchSSOLogin, fetchVerify } from '@/api'
+import { fetchSSOLogin } from '@/api'
 import { useAuthStore, useUserStore } from '@/store'
 import Icon403 from '@/icons/403.vue'
 
@@ -14,42 +14,42 @@ defineProps<Props>()
 
 const authStore = useAuthStore()
 
-const ms = useMessage()
+// const ms = useMessage()
 
-const loading = ref(false)
-const token = ref('')
+// const loading = ref(false)
+// const token = ref('')
 
-const disabled = computed(() => !token.value.trim() || loading.value)
+// const disabled = computed(() => !token.value.trim() || loading.value)
 
-async function handleVerify() {
-  const secretKey = token.value.trim()
+// async function handleVerify() {
+//   const secretKey = token.value.trim()
 
-  if (!secretKey)
-    return
+//   if (!secretKey)
+//     return
 
-  try {
-    loading.value = true
-    await fetchVerify(secretKey)
-    authStore.setToken(secretKey)
-    ms.success('success')
-    window.location.reload()
-  }
-  catch (error: any) {
-    ms.error(error.message ?? 'error')
-    authStore.removeToken()
-    token.value = ''
-  }
-  finally {
-    loading.value = false
-  }
-}
+//   try {
+//     loading.value = true
+//     await fetchVerify(secretKey)
+//     authStore.setToken(secretKey)
+//     ms.success('success')
+//     window.location.reload()
+//   }
+//   catch (error: any) {
+//     ms.error(error.message ?? 'error')
+//     authStore.removeToken()
+//     token.value = ''
+//   }
+//   finally {
+//     loading.value = false
+//   }
+// }
 
-function handlePress(event: KeyboardEvent) {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault()
-    handleVerify()
-  }
-}
+// function handlePress(event: KeyboardEvent) {
+//   if (event.key === 'Enter' && !event.shiftKey) {
+//     event.preventDefault()
+//     handleVerify()
+//   }
+// }
 
 const params = useUrlSearchParams('history')
 const userStore = useUserStore()
