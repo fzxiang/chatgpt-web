@@ -97,8 +97,6 @@ class BaseController extends Controller
      */
     public function send_get($url)
     {
-        $res = exec("/www/gowww/src/report_server/20221202/http_proxy/http_proxy -l='{$url}' -m='get' ");
-        return json_decode($res,true);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
