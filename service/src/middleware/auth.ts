@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
         const responese = await fetch(`${SSO_PROXY}/api/check` + `?token=${Authorization}`)
         const checkAuth = await responese.json() as Responese
         if (checkAuth?.status !== 'Success')
-          throw new Error(`Error: 无访问权限 | ${checkAuth?.message}`)
+          throw new Error(`Error: 无访问权限请重试 | ${checkAuth?.message}`)
       }
       next()
     }
