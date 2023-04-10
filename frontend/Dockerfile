@@ -1,31 +1,40 @@
 # build frontend
-FROM node:lts-alpine AS frontend
-
-RUN npm install pnpm -g
+FROM node:lts-alpine
 
 WORKDIR /app
 
-COPY ./package.json /app
+RUN npm install pnpm -g
 
-COPY ./pnpm-lock.yaml /app
+COPY ./package.json ./pnpm-lock.yaml ./
 
 RUN pnpm install
 
-COPY . /app
+COPY . .
 
 RUN pnpm run build
 
 # 基础镜像
-FROM nginx:latest
+FROM nginx:alpine
 
-# 将本地的html、css、js等静态资源复制到镜像中
-COPY --from=frontend /app/dist /usr/share/nginx/html
+WORKDIR /app
+
+RUN apk update \
+    && apk add --no-cache tzdata \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*
+
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
 
 # 将Nginx配置文件复制到镜像中
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# 暴露80端口
-EXPOSE 80
+# 将本地的html、css、js等静态资源复制到镜像中
+COPY --from=0 /app/dist .
+
+RUN chmod +x /wait
 
 # 启动Nginx服务
-CMD ["nginx", "-g", "daemon off;"]
+CMD /wait \
+    # && sed -i "s/web_port/${WEB_PORT:-80}/" /etc/nginx/conf.d/default.conf \
+    && sed -i "s/api_port/${API_PORT:-80}/" /etc/nginx/conf.d/default.conf \
+    && nginx -g 'daemon off;'

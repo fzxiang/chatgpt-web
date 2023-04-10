@@ -1,20 +1,15 @@
-# build frontend
-FROM node:lts-alpine AS frontend
+FROM node:lts-alpine
 
-RUN npm install pnpm -g
+RUN npm install pnpm -g && npm cache clean -force
 
 WORKDIR /app
 
-COPY ./package.json /app
-
-COPY ./pnpm-lock.yaml /app
+COPY ./package.json ./pnpm-lock.yaml ./
 
 RUN pnpm install
 
-COPY . /app
+COPY . .
 
-RUN npm run build
+RUN pnpm run build
 
-EXPOSE 3002
-
-RUN npm run prod
+CMD pnpm run prod

@@ -1,6 +1,7 @@
-import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
+import type { AxiosError, AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
+
 import request from './axios'
-import { useAuthStore } from '@/store'
 
 export interface HttpOption {
   url: string
@@ -23,22 +24,33 @@ function http<T = any>(
   { url, data, method, headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
 ) {
   const successHandler = (res: AxiosResponse<Response<T>>) => {
-    const authStore = useAuthStore()
+    // const authStore = useAuthStore()
 
     if (res.data.status === 'Success' || typeof res.data === 'string')
       return res.data
 
-    if (res.data.status === 'Unauthorized') {
-      authStore.removeToken()
-      window.location.reload()
-    }
+    // if (res.data.status === 'Unauthorized') {
+    //   authStore.removeToken()
+    //   window.location.reload()
+    // }
 
     return Promise.reject(res.data)
   }
 
-  const failHandler = (error: Response<Error>) => {
+  const failHandler = (error: AxiosError) => {
     afterRequest?.()
-    throw new Error(error?.message || 'Error')
+    switch (error.response?.status) {
+      case StatusCodes.UNAUTHORIZED:
+        const message: string = error?.message
+        // 信息过期或者无权限 跳转到sso
+        if (to.path !== '/sso' && message === ReasonPhrases.UNAUTHORIZED) {
+          authStore.removeToken()
+          next({ name: 'sso' })
+        }
+        throw new Error(ReasonPhrases.UNAUTHORIZED)
+      default:
+        throw new Error(error?.message || 'Error')
+    }
   }
 
   beforeRequest?.()
@@ -48,8 +60,8 @@ function http<T = any>(
   const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
 
   return method === 'GET'
-    ? request.get(url, { params, signal, onDownloadProgress }).then(successHandler, failHandler)
-    : request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler, failHandler)
+    ? request.get(url, { params, signal, onDownloadProgress }).then(successHandler).catch(failHandler)
+    : request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler).catch(failHandler)
 }
 
 export function get<T = any>(
