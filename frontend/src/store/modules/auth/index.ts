@@ -27,14 +27,9 @@ export const useAuthStore = defineStore('auth-store', {
 
   actions: {
     async getSession() {
-      try {
-        const { data } = await fetchSession<SessionResponse>()
-        this.session = { ...data }
-        return Promise.resolve(data)
-      }
-      catch (error) {
-        return Promise.reject(error)
-      }
+      const { data } = await fetchSession<SessionResponse>()
+      this.session = { ...data }
+      return data
     },
 
     setToken(token: string) {

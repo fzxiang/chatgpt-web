@@ -1,5 +1,5 @@
 import type { Router } from 'vue-router'
-import { ReasonPhrases } from 'http-status-codes'
+import { StatusCodes } from 'http-status-codes'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
 // export function setupPageGuard(router: Router) {
@@ -37,13 +37,14 @@ export function setupPageGuard(router: Router) {
         next()
       }
       catch (error: any) {
-        const message: string = error?.message
         // 信息过期或者无权限 跳转到sso
-        if (to.path !== '/sso' && message === ReasonPhrases.UNAUTHORIZED) {
+        if (to.path !== '/sso' && error.response.status === StatusCodes.UNAUTHORIZED) {
           authStore.removeToken()
           next({ name: 'sso' })
         }
-        else { next() }
+        else {
+          next()
+        }
       }
     }
     else {

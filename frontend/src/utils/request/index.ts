@@ -1,5 +1,4 @@
 import type { AxiosError, AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
-import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
 import request from './axios'
 
@@ -29,28 +28,12 @@ function http<T = any>(
     if (res.data.status === 'Success' || typeof res.data === 'string')
       return res.data
 
-    // if (res.data.status === 'Unauthorized') {
-    //   authStore.removeToken()
-    //   window.location.reload()
-    // }
-
     return Promise.reject(res.data)
   }
 
   const failHandler = (error: AxiosError) => {
     afterRequest?.()
-    switch (error.response?.status) {
-      case StatusCodes.UNAUTHORIZED:
-        const message: string = error?.message
-        // 信息过期或者无权限 跳转到sso
-        if (to.path !== '/sso' && message === ReasonPhrases.UNAUTHORIZED) {
-          authStore.removeToken()
-          next({ name: 'sso' })
-        }
-        throw new Error(ReasonPhrases.UNAUTHORIZED)
-      default:
-        throw new Error(error?.message || 'Error')
-    }
+    throw error
   }
 
   beforeRequest?.()
