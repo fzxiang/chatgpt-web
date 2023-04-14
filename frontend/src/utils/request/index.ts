@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
-
 import request from './axios'
+import errorHander from './error'
 
 export interface HttpOption {
   url: string
@@ -19,6 +19,13 @@ export interface Response<T = any> {
   status: string
 }
 
+function createFailHanler(fn?: Function) {
+  return (error: AxiosError) => {
+    fn?.(error)
+    return error
+  }
+}
+
 function http<T = any>(
   { url, data, method, headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
 ) {
@@ -31,10 +38,7 @@ function http<T = any>(
     return Promise.reject(res.data)
   }
 
-  const failHandler = (error: AxiosError) => {
-    afterRequest?.()
-    throw error
-  }
+  const failHandler = createFailHanler(errorHander)
 
   beforeRequest?.()
 
@@ -43,8 +47,16 @@ function http<T = any>(
   const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
 
   return method === 'GET'
-    ? request.get(url, { params, signal, onDownloadProgress }).then(successHandler).catch(failHandler)
-    : request.post(url, params, { headers, signal, onDownloadProgress }).then(successHandler).catch(failHandler)
+    ? request
+      .get(url, { params, signal, onDownloadProgress })
+      .then(successHandler)
+      .catch(failHandler)
+      .finally(afterRequest)
+    : request
+      .post(url, params, { headers, signal, onDownloadProgress })
+      .then(successHandler)
+      .catch(failHandler)
+      .finally(afterRequest)
 }
 
 export function get<T = any>(
