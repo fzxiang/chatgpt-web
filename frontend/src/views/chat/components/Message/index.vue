@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { NDropdown } from 'naive-ui'
 import AvatarComponent from './Avatar.vue'
 import TextComponent from './Text.vue'
@@ -72,6 +72,16 @@ function handleSelect(key: 'copyText' | 'delete' | 'toggleRenderType') {
 function handleRegenerate() {
   emit('regenerate')
 }
+
+onMounted(() => {
+  if (props.text?.includes('undefined')) {
+    window.console.info('命中重新发送', props.text)
+    setTimeout(() => {
+      window.console.info('定时操作重新发送')
+      emit('regenerate')
+    }, 10)
+  }
+})
 </script>
 
 <template>
