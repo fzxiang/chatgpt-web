@@ -1,0 +1,54 @@
+version: '3'
+
+networks:
+  chatgpt:
+
+services:
+  # 服务容器
+  service: 
+    container_name: chatgpt-service
+    image: paoyou/chatgpt-service:${VERSION:-latest}
+    build:
+      context: service
+      dockerfile: Dockerfile
+    environment:
+      APP_PORT: ${SERVICE_APP_PORT:-8100}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_ACCESS_TOKEN: ${OPENAI_ACCESS_TOKEN}
+      OPENAI_API_BASE_URL: ${OPENAI_API_BASE_URL}
+      OPENAI_API_MODEL: ${OPENAI_API_MODEL}
+      API_REVERSE_PROXY: ${API_REVERSE_PROXY}
+      TIMEOUT_MS: ${TIMEOUT_MS:-60000}
+      AUTH_OPEN: ${AUTH_OPEN:-true}
+      SOCKS_PROXY_HOST: ${SOCKS_PROXY_HOST}
+      SOCKS_PROXY_PORT: ${SOCKS_PROXY_PORT}
+      HTTPS_PROXY: ${HTTPS_PROXY}
+      MAX_REQUEST_PER_HOUR: ${MAX_REQUEST_PER_HOUR:-0}
+      APP_SSO_URL: ${APP_SSO_URL}
+      AUTH_EXPIRE_TIME: ${AUTH_EXPIRE_TIME}
+      PRIVATE_KEY: ${PRIVATE_KEY}
+      TZ: ${TZ}
+    ports:
+      - ${SERVICE_APP_PORT:-8100}:${SERVICE_APP_PORT:-8100}
+    extra_hosts:
+      - "me.paoyou.work:172.18.132.200"
+    networks:
+      - chatgpt
+
+   # 前端
+  frontend: 
+    container_name: chatgpt-frontend
+    image: paoyou/chatgpt-frontend:${VERSION:-latest}
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      TZ: ${TZ}
+      API_PORT: ${SERVICE_APP_PORT:-8100}
+    ports:
+      - ${FRONTEND_APP_PORT:-3010}:80
+    networks:
+      - chatgpt
+    depends_on:
+      - service

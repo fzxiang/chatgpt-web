@@ -1,11 +1,11 @@
 # build frontend
-FROM node:lts-alpine
+FROM node:16-alpine
 
 WORKDIR /app
 
 RUN npm install pnpm -g
 
-COPY ./package.json ./pnpm-lock.yaml ./
+COPY ./package.json ./pnpm-lock.yaml ./.env ./
 
 RUN pnpm install
 
@@ -13,7 +13,7 @@ COPY . .
 
 RUN pnpm run build
 
-# 基础镜像
+# # 基础镜像
 FROM nginx:alpine
 
 WORKDIR /app

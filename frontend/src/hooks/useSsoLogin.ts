@@ -9,7 +9,3 @@ async function ssoLogin() {
   url.searchParams.set('service', window.location.href)
   window.location.href = url.href
 }
-
-window.onload = () => {
-  console.log('load', location.href)
-}

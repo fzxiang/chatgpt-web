@@ -34,5 +34,7 @@ coverage
 
 /verification/.env
 
-docker-compose.yml
 .vscode/settings.json
+
+.env
+**/*/.env

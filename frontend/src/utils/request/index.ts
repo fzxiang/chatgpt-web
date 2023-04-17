@@ -22,7 +22,7 @@ export interface Response<T = any> {
 function createFailHanler(fn?: Function) {
   return (error: AxiosError) => {
     fn?.(error)
-    return error
+    throw error
   }
 }
 
@@ -61,7 +61,7 @@ function http<T = any>(
 
 export function get<T = any>(
   { url, data, method = 'GET', onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
-): Promise<Response<T> | AxiosError> {
+): Promise<Response<T>> {
   return http<T>({
     url,
     method,
@@ -75,7 +75,7 @@ export function get<T = any>(
 
 export function post<T = any>(
   { url, data, method = 'POST', headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
-): Promise<Response<T> | AxiosError> {
+): Promise<Response<T>> {
   return http<T>({
     url,
     method,
