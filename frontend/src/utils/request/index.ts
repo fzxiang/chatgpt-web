@@ -61,7 +61,7 @@ function http<T = any>(
 
 export function get<T = any>(
   { url, data, method = 'GET', onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
-): Promise<Response<T>> {
+): Promise<Response<T> | AxiosError> {
   return http<T>({
     url,
     method,
@@ -75,7 +75,7 @@ export function get<T = any>(
 
 export function post<T = any>(
   { url, data, method = 'POST', headers, onDownloadProgress, signal, beforeRequest, afterRequest }: HttpOption,
-): Promise<Response<T>> {
+): Promise<Response<T> | AxiosError> {
   return http<T>({
     url,
     method,
