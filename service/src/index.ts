@@ -72,8 +72,9 @@ router.get('/ssoLogin', async (req, res) => {
     url.pathname = '/login'
 
     backUrl = (req.query.back || req.headers.referer) as string
+    const referer = new URL(req.headers.referer)
     url.searchParams.set('url', backUrl as string)
-    url.searchParams.set('service', `${req.protocol}://${req.headers.host}/checkTicket`)
+    url.searchParams.set('service', `${referer.origin}/api/checkTicket`)
 
     // const AUTH_OPEN = process.env.AUTH_OPEN
     // const isOpen = AUTH_OPEN === String(true)
